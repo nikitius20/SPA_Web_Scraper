@@ -34,12 +34,12 @@ def parse_url(url, save_links = True):
         if url not in parsed_url:
             html_content = get_page_content(url)
             parse_text_content(html_content, url)
-            links = get_all_links_from_page(html_content)[:5]
-            
+            links = get_all_links_from_page(html_content)
+            print("links",links)
             if save_links: 
                 for link in links:
                     if link.startswith('http') | link.startswith('https'):
-                        unparsed_url.update(link)
+                        unparsed_url.update([link])
     except Exception as e:
         print(f"An error occurred: {e}")
 
@@ -55,20 +55,17 @@ def parse_text_content(html_content, url):
     soup = BeautifulSoup(html_content, 'html.parser')
     # Example: Extract main body
     main = soup.find_all("main")
-    print(main)
     main_text = ""
     for el in main:
         main_text += el.get_text()
     
-    #save_to_file()
+    #save to file
     write_info_to_file(url, main_text)
 
 def write_info_to_file(url,text): 
     global parsed_url 
-    print("text",text)
-    new_text = url[8:].replace("/", "_")
-    print("new_text",new_text)
-    with open(f'parsed_info\{new_text}.txt', 'w', encoding='utf-8') as file:
+    file_name = url[8:].replace("/", "_")
+    with open(f'parsed_info\{file_name}.txt', 'w', encoding='utf-8') as file:
         file.write(text)
     parsed_url.update(url)
     
@@ -81,11 +78,14 @@ def main():
     parse_url(starting_url)
 
     #second layer
-    for link in unparsed_url:
+    print("unparsed_url",unparsed_url)  
+    second_layer = unparsed_url.copy()
+    for link in second_layer:
         parse_url(link)
     
     #final layer
-    for link in unparsed_url:
+    final_layer = unparsed_url.copy()
+    for link in final_layer:
         parse_url(link, False)
 
 
