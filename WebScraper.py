@@ -29,16 +29,19 @@ def parse_url(url, save_links = True):
     global parsed_url 
     global unparsed_url 
 
-    print(f"worning on {url}")
-    if url not in parsed_url:
-        html_content = get_page_content(url)
-        parse_text_content(html_content, url)
-        links = get_all_links_from_page(html_content)[:5]
-        
-        if save_links: 
-            for link in links:
-                if link.startswith('http') | link.startswith('https'):
-                    unparsed_url.update(link)
+    try:
+        print(f"worning on {url}")
+        if url not in parsed_url:
+            html_content = get_page_content(url)
+            parse_text_content(html_content, url)
+            links = get_all_links_from_page(html_content)[:5]
+            
+            if save_links: 
+                for link in links:
+                    if link.startswith('http') | link.startswith('https'):
+                        unparsed_url.update(link)
+    except Exception as e:
+        print(f"An error occurred: {e}")
 
     
 def get_all_links_from_page(html_content):
