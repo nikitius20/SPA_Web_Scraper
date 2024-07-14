@@ -8,7 +8,7 @@ from bs4 import BeautifulSoup
 global parsed_url 
 global unparsed_url 
 parsed_url = set()
-parsed_url = set()
+unparsed_url = set()
 
 def setup_driver():
     chrome_options = Options()
@@ -53,22 +53,28 @@ def parse_text_content(html_content, url):
     # Example: Extract main body
     main = soup.find_all("main")
     print(main)
-    main_text = main.get_text()
+    main_text = ""
+    for el in main:
+        main_text += el.get_text()
+    
     #save_to_file()
     write_info_to_file(url, main_text)
 
 def write_info_to_file(url,text): 
     global parsed_url 
-    with open(f'{url}.txt', 'w') as file:
+    print("text",text)
+    new_text = url[8:].replace("/", "_")
+    print("new_text",new_text)
+    with open(f'parsed_info\{new_text}.txt', 'w', encoding='utf-8') as file:
         file.write(text)
     parsed_url.update(url)
     
-   
+    
 
 def main():
     
     global unparsed_url 
-    starting_url = "https://www.gov.pl/web/gov/uslugi-dla-obywatela/"  # Replace with the actual URL
+    starting_url = "https://www.gov.pl/web/gov/uslugi-dla-obywatela"  # Replace with the actual URL
     parse_url(starting_url)
 
     #second layer
